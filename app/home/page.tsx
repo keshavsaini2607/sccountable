@@ -1,12 +1,12 @@
-import React from 'react'
-import OverviewPage from './overview/page'
+import Home from "@/components/pageComponents/Home";
+import React from "react";
 
 const HomePage = () => {
-  return (
-    <div>
-        <OverviewPage />
-    </div>
-  )
-}
+   return (
+      <>
+         <Home />
+      </>
+   );
+};
 
-export default HomePage
+export default HomePage;

@@ -136,9 +136,9 @@ const Sidebar: React.FC = () => {
          </div>
          <div className="absolute bottom-0 w-full">
             <div className="divider"></div>
-            <div className="p-6 flex items-center gap-4">
+            <div className="p-6 flex items-center gap-4 relative">
                <Avatar>
-                  <AvatarImage src="https://github.com/shad.png" />
+                  <AvatarImage src="https://github.com/shadcn.png" />
                   <AvatarFallback>KS</AvatarFallback>
                </Avatar>
                <span>Keshav Saini</span>

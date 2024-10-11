@@ -1,15 +1,16 @@
 import React from "react";
 import { GeneralProvider } from "./GeneralContext";
+import { AuthProvider } from "./AuthContext";
 
-interface props {
+interface Props {
    children: React.ReactNode;
 }
 
-const RootProvider: React.FC<props> = ({ children }) => {
+const RootProvider: React.FC<Props> = ({ children }) => {
    return (
-      <>
-         <GeneralProvider>{children}</GeneralProvider>
-      </>
+      <GeneralProvider>
+         <AuthProvider>{children}</AuthProvider>
+      </GeneralProvider>
    );
 };
 

@@ -1,7 +1,8 @@
+import axios from "axios";
 import { redirect } from "next/navigation";
 import React from "react";
 
-const App = () => {
+const App = async () => {
    redirect("/home");
    return <div></div>;
 };

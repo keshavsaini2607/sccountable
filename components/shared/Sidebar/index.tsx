@@ -1,149 +1,85 @@
 "use client";
-
-import React from "react";
-import { LuLayoutPanelLeft } from "react-icons/lu";
-import { VscGraph } from "react-icons/vsc";
-import { IoMdContacts } from "react-icons/io";
-import { BiSolidReport } from "react-icons/bi";
-import { TfiDashboard } from "react-icons/tfi";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { FaChevronRight, FaAngleDown } from "react-icons/fa6";
+import React, { useEffect, useState } from "react";
 import { useGeneralContext } from "@/app/context/GeneralContext";
 import { useRouter } from "next/navigation";
-import { IconType } from "react-icons";
-
-interface MenuItem {
-   name: string;
-   icon: IconType;
-   href: string;
-   childMenu?: {
-      name: string;
-   }[];
-}
-
-export const menuItems: MenuItem[] = [
-   {
-      name: "Overview",
-      icon: LuLayoutPanelLeft,
-      href: "/home/overview",
-   },
-   {
-      name: "Transactions",
-      icon: VscGraph,
-      href: "/home/transactions",
-   },
-   {
-      name: "Customers",
-      icon: IoMdContacts,
-      href: "/home/customers",
-   },
-   {
-      name: "Statements",
-      icon: BiSolidReport,
-      href: "/home/statements",
-      childMenu: [
-         {
-            name: "P&L Statement",
-         },
-         {
-            name: "Balance Sheet",
-         },
-         {
-            name: "Cash Flow Statement",
-         },
-      ],
-   },
-];
+import { signOut, useSession } from "next-auth/react";
+import axios from "axios";
+import { motion } from "framer-motion";
+import { menuItems } from "@/lib/menuItems";
+import { Logo } from "./Logo";
+import { MenuItem } from "./MenuItem";
+import { SubMenu } from "./SubMenu";
+import { Button } from "@/components/ui/button";
 
 const Sidebar: React.FC = () => {
-   const { homeActiveTab, setHomeActiveTab } = useGeneralContext();
+   const session = useSession();
+   const { homeActiveTab, setHomeActiveTab, setUser, user } =
+      useGeneralContext();
    const router = useRouter();
-   const handleMenuClick = (item: MenuItem) => {
+   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+
+   const handleMenuClick = (item: (typeof menuItems)[0]) => {
       setHomeActiveTab(item.name);
       router.push(item.href);
    };
 
+   const loadUserData = async (userId: string) => {
+      const response: any = await axios.get(
+         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/user/profile/${userId}`
+      );
+      if (response) {
+         return response.data;
+      }
+      return null;
+   };
+
+   useEffect(() => {
+      (async () => {
+         if (session && session.data?.user?.id && !user) {
+            const userData = await loadUserData(session.data?.user?.id);
+            if (userData) {
+               setUser(userData.data);
+            }
+         }
+      })();
+   }, [session]);
+
    return (
-      <aside className="bg-primary text-white h-full relative">
-         <div className="p-6 flex items-center gap-2 mb-4">
-            <TfiDashboard size={30} className="text-secondary" />
-            <h1 className="font-semibold text-xl text-white">
-               accoun<span className="text-secondary">table</span>
-            </h1>
+      <aside className="bg-primary text-white h-full relative w-64 transition-all duration-300 ease-in-out">
+         <Logo />
+
+         <div className="px-4">
+            <span className="text-accent text-xs uppercase font-medium ml-2 tracking-wider">
+               Menu
+            </span>
+            <nav className="mt-4 relative">
+               <ul className="space-y-2">
+                  {menuItems.map((item, idx) => (
+                     <React.Fragment key={idx}>
+                        <MenuItem
+                           item={item}
+                           isActive={homeActiveTab === item.name}
+                           onClick={() => handleMenuClick(item)}
+                           onHover={setHoveredItem}
+                        />
+                        <SubMenu
+                           item={item}
+                           isActive={homeActiveTab === item.name}
+                        />
+                     </React.Fragment>
+                  ))}
+               </ul>
+            </nav>
          </div>
-         <div>
-            <span className="text-accent text-sm uppercase ml-6">Menu</span>
-            <ul className="flex flex-col gap-6 mt-4 relative">
-               {menuItems.map((item, idx: number) => (
-                  <React.Fragment key={idx}>
-                     <li
-                        className="flex items-center justify-between pr-3 cursor-pointer"
-                        onClick={() => handleMenuClick(item)}
-                     >
-                        <div className="flex gap-3 items-center h-[2rem] px-6 relative">
-                           {homeActiveTab === item.name && (
-                              <div className="absolute left-0 top-0 h-full w-[4px] bg-secondary rounded-tr-lg rounded-br-lg"></div>
-                           )}
-                           <span
-                              className={`text-2xl ${
-                                 homeActiveTab === item.name
-                                    ? "text-secondary"
-                                    : "text-accent"
-                              }`}
-                           >
-                              {item.icon()}
-                           </span>
-                           <span
-                              className={`${
-                                 homeActiveTab === item.name
-                                    ? "text-white"
-                                    : "text-accent"
-                              } text-sm`}
-                           >
-                              {item.name}
-                           </span>
-                        </div>
-                        {item.childMenu ? (
-                           homeActiveTab === item.name ? (
-                              <FaAngleDown className="text-accent" />
-                           ) : (
-                              <FaChevronRight className="text-accent" />
-                           )
-                        ) : null}
-                     </li>
-                     {item.childMenu && homeActiveTab === item.name && (
-                        <ol className="ml-6 flex flex-col gap-2">
-                           {item.childMenu.map((child, childIdx) => (
-                              <li
-                                 key={childIdx}
-                                 className="flex items-center h-[2rem] px-6"
-                              >
-                                 <span
-                                    className={`text-accent text-sm relative`}
-                                 >
-                                    {child.name}
-                                    <span className="bg-secondary text-white -top-3 px-2 text-[0.5rem] rounded-xl absolute w-max">
-                                       Coming Soon
-                                    </span>
-                                 </span>
-                              </li>
-                           ))}
-                        </ol>
-                     )}
-                  </React.Fragment>
-               ))}
-            </ul>
-         </div>
-         <div className="absolute bottom-0 w-full">
-            <div className="divider"></div>
-            <div className="p-6 flex items-center gap-4 relative">
-               <Avatar>
-                  <AvatarImage src="https://github.com/shadcn.png" />
-                  <AvatarFallback>KS</AvatarFallback>
-               </Avatar>
-               <span>Keshav Saini</span>
-            </div>
-         </div>
+
+         <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="absolute bottom-0 w-full border-t border-gray-700/50"
+         >
+            {/* <UserProfileButton /> */}
+            <Button onClick={() => signOut()}>Logout</Button>
+         </motion.div>
       </aside>
    );
 };

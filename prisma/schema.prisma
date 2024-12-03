@@ -1,0 +1,60 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String     @id @default(auto()) @map("_id") @db.ObjectId
+  firstName         String
+  lastName          String
+  email             String
+  password          String?
+  country           String?
+  phone             Int?
+  occupation        String?
+  userType          String?
+  profilePicture    String?
+  authProvider      String
+  isAccountVerified Boolean?
+  createdAt         DateTime   @default(now())
+  modifiedAt        DateTime   @updatedAt @map("updatedAt")
+  Customer          Customer[]
+}
+
+model Customer {
+  id          String        @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  phone       Int
+  email       String?
+  address     String?
+  companyName String?
+  gstNo       String?
+  createdBy   String        @db.ObjectId
+  user        User          @relation(fields: [createdBy], references: [id])
+  createdAt   DateTime      @default(now())
+  modifiedAt  DateTime      @updatedAt @map("updatedAt")
+  Transaction Transaction[]
+}
+
+model Transaction {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String?
+  type        String
+  amount      Int
+  status      String   @default("PENDING")
+  customerId  String   @db.ObjectId
+  customer    Customer @relation(fields: [customerId], references: [id])
+  createdAt   DateTime @default(now())
+  modifiedAt  DateTime @updatedAt @map("updatedAt")
+}

@@ -1,4 +1,5 @@
 "use client";
+import { User } from "@prisma/client";
 import React, {
    createContext,
    useState,
@@ -11,6 +12,8 @@ import React, {
 interface GeneralContextType {
    homeActiveTab: string;
    setHomeActiveTab: Dispatch<SetStateAction<string>>;
+   user: User;
+   setUser: Dispatch<SetStateAction<User>>;
 }
 
 export const GeneralContext = createContext<GeneralContextType | undefined>(
@@ -21,9 +24,12 @@ export const GeneralProvider: React.FC<{ children: ReactNode }> = ({
    children,
 }) => {
    const [homeActiveTab, setHomeActiveTab] = useState<string>("");
+   const [user, setUser] = useState<User | any>();
 
    return (
-      <GeneralContext.Provider value={{ homeActiveTab, setHomeActiveTab }}>
+      <GeneralContext.Provider
+         value={{ homeActiveTab, setHomeActiveTab, user, setUser }}
+      >
          {children}
       </GeneralContext.Provider>
    );

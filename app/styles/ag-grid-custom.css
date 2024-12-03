@@ -1,0 +1,35 @@
+/* Custom styles for AG Grid */
+.ag-theme-alpine {
+    --ag-font-family: inherit;
+    --ag-font-size: 14px;
+    --ag-header-background-color: #f9fafb;
+    --ag-header-foreground-color: #374151;
+    --ag-header-cell-hover-background-color: #f3f4f6;
+    --ag-row-hover-color: #f9fafb;
+    --ag-selected-row-background-color: #ecfdf5;
+    --ag-row-border-color: #f3f4f6;
+    --ag-cell-horizontal-padding: 1rem;
+    --ag-header-column-separator-display: none;
+  }
+  
+  .ag-theme-alpine .ag-header-cell {
+    font-weight: 600;
+  }
+  
+  .ag-theme-alpine .ag-row {
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-bottom-color: var(--ag-row-border-color);
+  }
+  
+  .ag-theme-alpine .ag-row-hover {
+    background-color: var(--ag-row-hover-color) !important;
+  }
+  
+  .ag-theme-alpine .ag-row-selected {
+    background-color: var(--ag-selected-row-background-color) !important;
+  }
+  
+  .ag-theme-alpine .ag-cell {
+    line-height: 2.5rem;
+  }

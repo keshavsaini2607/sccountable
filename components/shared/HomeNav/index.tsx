@@ -1,77 +1,73 @@
 "use client";
-
-import {
-   DropdownMenu,
-   DropdownMenuContent,
-   DropdownMenuItem,
-   DropdownMenuLabel,
-   DropdownMenuSeparator,
-   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import React, { useState } from "react";
-import { FaAngleDown } from "react-icons/fa6";
-import { IoIosNotifications } from "react-icons/io";
 import { SiCashapp } from "react-icons/si";
 import { MdOutlineWidgets } from "react-icons/md";
-import { useAuth } from "@/app/context/AuthContext";
+import { RoleSelector } from "./RoleSelector";
+import { ActionButton } from "./ActionButton";
+import { NotificationBell } from "./NotificationBell";
+import { motion } from "framer-motion";
 
 const businessRoles = [
-   {
-      name: "Proprietor",
-   },
-   {
-      name: "Accounts",
-   },
-   {
-      name: "Other",
-   },
+   { name: "Proprietor" },
+   { name: "Accounts" },
+   { name: "Other" },
 ];
 
 const HomeNav = () => {
-   const { isAuthenticated } = useAuth();
    const [selectedRole, setSelectedRole] = useState("Proprietor");
+   const [notificationCount] = useState(3); // Example notification count
+
+   const handleUpgrade = () => {
+      // Handle upgrade action
+      console.log("Upgrade clicked");
+   };
+
+   const handleAddWidget = () => {
+      // Handle add widget action
+      console.log("Add widget clicked");
+   };
+
+   const handleNotifications = () => {
+      // Handle notifications action
+      console.log("Notifications clicked");
+   };
 
    return (
-      <nav className="p-4 border-b-2 w-full flex items-center justify-between">
-         {isAuthenticated ? (
-            <DropdownMenu>
-               <DropdownMenuTrigger>
-                  <span className="flex items-center gap-3 font-semibold">
-                     {selectedRole}
-                     <FaAngleDown />
-                  </span>
-               </DropdownMenuTrigger>
-               <DropdownMenuContent>
-                  <DropdownMenuLabel>I Am</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  {businessRoles.map((role, idx) => (
-                     <DropdownMenuItem
-                        key={idx}
-                        onClick={() => setSelectedRole(role.name)}
-                     >
-                        {role.name}
-                     </DropdownMenuItem>
-                  ))}
-               </DropdownMenuContent>
-            </DropdownMenu>
-         ) : null}
-         <div className="flex items-center gap-6">
-            <span className="flex items-center gap-2 cursor-pointer hover:bg-gray-200 p-2 rounded">
-               <SiCashapp className="text-primary" />
-               <span className="text-sm">Upgrade Plan</span>
-            </span>
-            <span className="flex items-center gap-2 cursor-pointer hover:bg-gray-200 p-2 rounded">
-               <MdOutlineWidgets className="text-primary" />
-               <span className="text-sm">Add New Widget</span>
-            </span>
-         </div>
-         <div>
-            <IoIosNotifications
-               size={30}
-               className="border border-accent rounded-full p-1 cursor-pointer"
+      <motion.nav
+         initial={{ opacity: 0, y: -20 }}
+         animate={{ opacity: 1, y: 0 }}
+         className="px-6 py-4 border-b border-gray-200 bg-white shadow-sm"
+      >
+         <div className="max-w-7xl mx-auto flex items-center justify-between">
+            <RoleSelector
+               selectedRole={selectedRole}
+               onRoleChange={setSelectedRole}
+               roles={businessRoles}
             />
+
+            <div className="flex items-center gap-2">
+               <div className="flex items-center gap-1">
+                  <ActionButton
+                     icon={SiCashapp}
+                     label="Upgrade Plan"
+                     onClick={handleUpgrade}
+                  />
+                  <ActionButton
+                     icon={MdOutlineWidgets}
+                     label="Add Widget"
+                     onClick={handleAddWidget}
+                  />
+               </div>
+
+               <div className="h-6 w-px bg-gray-200 mx-2" />
+
+               <NotificationBell
+                  count={notificationCount}
+                  onClick={handleNotifications}
+               />
+            </div>
          </div>
-      </nav>
+      </motion.nav>
    );
 };
 
